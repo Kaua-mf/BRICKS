@@ -1,9 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// MODEL da bola: apenas dados (nenhuma regra, nenhuma referência a View/Controller).
-/// A pontuação que ficava aqui foi movida para o Singleton GameSession.
-/// </summary>
+
 public class BallModel : MonoBehaviour
 {
     [Header("Física")]

@@ -6,20 +6,14 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-/// <summary>
-/// Gera o projeto completo com UM clique: Menu  Bricks > Gerar jogo completo.
-/// Cria as tags, o material de física, os prefabs (player, bola, 3 tipos de brick) e as 6 cenas
-/// (Menu, Fase1, Fase2, Fase3, Vitoria, GameOver), liga todas as referências e registra no Build Settings.
-/// </summary>
+
 public static class BricksProjectBuilder
 {
-    // ------------------------------------------------------------------ pastas
     private const string ArtDir     = "Assets/Art/";
     private const string PrefabDir  = "Assets/Prefabs/";
     private const string SceneDir   = "Assets/Scenes/";
     private const string PhysicsDir = "Assets/Physics/";
 
-    // ------------------------------------------------------------------- mundo (6 x 10 unidades)
     private const float HalfW      = 3f;
     private const float TopInner   = 4.2f;
     private const float BrickW     = 0.75f;
@@ -36,7 +30,6 @@ public static class BricksProjectBuilder
         new Color(1.00f, 0.65f, 0.15f)
     };
 
-    // N = normal (1 vida) | S = reforçado (2 vidas) | T = aço (3 vidas) | . = vazio  (8 colunas)
     private static readonly string[] Layout1 =
     {
         "SSNNNNSS",
@@ -67,7 +60,6 @@ public static class BricksProjectBuilder
         "...NN..."
     };
 
-    // =============================================================== PONTO DE ENTRADA
     [MenuItem("Bricks/Gerar jogo completo (tags, prefabs e cenas)")]
     public static void BuildAll()
     {
@@ -77,7 +69,7 @@ public static class BricksProjectBuilder
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
 
         AssetDatabase.Refresh();
-        if (!EnsureArt()) return;   // localiza/move/importa os sprites; aborta com mensagem clara se faltar algo
+        if (!EnsureArt()) return;   
         ConfigureArt();
 
         EnsureTag("Enemy");
@@ -114,7 +106,6 @@ public static class BricksProjectBuilder
             "Dica: na aba Game escolha a proporção 9:16 (Portrait).", "OK");
     }
 
-    // ================================================================== PREPARAÇÃO
     private static readonly string[] RequiredArt =
     {
         "ball.png", "bg_fase1.png", "bg_fase2.png", "bg_fase3.png", "bg_gameover.png", "bg_menu.png",
@@ -123,10 +114,7 @@ public static class BricksProjectBuilder
         "panel.png", "px.png", "star.png", "title_gameover.png", "title_victory.png"
     };
 
-    /// <summary>
-    /// Garante que todas as imagens existam em Assets/Art e estejam importadas como Sprite.
-    /// Se a pasta foi extraída no lugar errado (ex.: Assets/Bricks_Para_Extrair_em_Assets/Art), move os arquivos.
-    /// </summary>
+ 
     private static bool EnsureArt()
     {
         EnsureFolder("Assets", "Art");
@@ -137,7 +125,6 @@ public static class BricksProjectBuilder
             string target = ArtDir + file;
             if (AssetDatabase.LoadAssetAtPath<Texture2D>(target) == null)
             {
-                // procura o arquivo em qualquer outra pasta do projeto
                 string found = null;
                 string nameNoExt = System.IO.Path.GetFileNameWithoutExtension(file);
                 foreach (string guid in AssetDatabase.FindAssets(nameNoExt))
@@ -153,7 +140,6 @@ public static class BricksProjectBuilder
                 Debug.Log("Bricks: " + file + " estava em '" + found + "' e foi movido para " + target);
             }
 
-            // força a importação como Sprite (caso o postprocessor ainda não estivesse compilado na 1a importação)
             TextureImporter importer = AssetImporter.GetAtPath(target) as TextureImporter;
             if (importer != null)
             {
@@ -214,13 +200,12 @@ public static class BricksProjectBuilder
             mat = new PhysicsMaterial2D("BallBounce");
             AssetDatabase.CreateAsset(mat, path);
         }
-        mat.bounciness = 1f;   // rebate sem perder energia
-        mat.friction   = 0f;   // sem atrito
+        mat.bounciness = 1f;   
+        mat.friction   = 0f;   
         EditorUtility.SetDirty(mat);
         return mat;
     }
 
-    // ===================================================================== PREFABS
     private static GameObject SavePrefab(GameObject go, string name)
     {
         GameObject asset = PrefabUtility.SaveAsPrefabAsset(go, PrefabDir + name + ".prefab");
@@ -290,14 +275,13 @@ public static class BricksProjectBuilder
         col.size           = body.sprite.bounds.size;
         col.sharedMaterial = mat;
 
-        // Rachaduras (aparecem quando o brick leva dano)
         GameObject crackGo = new GameObject("Crack");
         crackGo.transform.SetParent(go.transform, false);
         SpriteRenderer crack = crackGo.AddComponent<SpriteRenderer>();
         crack.sortingOrder = 6;
         crack.enabled      = false;
 
-        go.AddComponent(modelType);            // NormalBrickModel / StrongBrickModel / SteelBrickModel
+        go.AddComponent(modelType);           
         go.AddComponent<BrickController>();
         BrickView view = go.AddComponent<BrickView>();
 
@@ -307,7 +291,6 @@ public static class BricksProjectBuilder
         return SavePrefab(go, name);
     }
 
-    // ======================================================================= CENAS
     private static Scene NewScene()
     {
         return EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -331,7 +314,6 @@ public static class BricksProjectBuilder
         EditorBuildSettings.scenes = scenes;
     }
 
-    // -------------------------------------------------------------------- Menu
     private static void BuildMenuScene()
     {
         Scene scene = NewScene();
@@ -341,7 +323,6 @@ public static class BricksProjectBuilder
         Canvas canvas = CreateCanvas("UI", cam, 100);
         Transform ui = canvas.transform;
 
-        // Fundo 100% estático: sem estrelas/bricks caindo.
 
         Image logo = MakeImage(ui, "Logo", Spr("logo_bricks.png"), Color.white, new Vector2(0.5f, 0.5f),
                                new Vector2(0f, 460f), new Vector2(940f, 427f));
@@ -373,7 +354,6 @@ public static class BricksProjectBuilder
         SaveScene(scene, SceneNames.Menu);
     }
 
-    // ------------------------------------------------------------------- Fases
     private static void BuildLevelScene(int number, string background, string[] layout, float ballSpeed, string nextScene,
                                         GameObject playerPrefab, GameObject ballPrefab, GameObject[] brickPrefabs,
                                         PhysicsMaterial2D bounce)
@@ -384,16 +364,13 @@ public static class BricksProjectBuilder
         CreateWalls(bounce);
         CreateEdgeGlow();
 
-        // Player
         GameObject player = (GameObject)PrefabUtility.InstantiatePrefab(playerPrefab);
         player.transform.position = new Vector3(0f, PlayerY, 0f);
 
-        // Bola (o LevelController gruda no player ao iniciar)
         GameObject ball = (GameObject)PrefabUtility.InstantiatePrefab(ballPrefab);
         ball.transform.position = new Vector3(0f, PlayerY + 0.30f, 0f);
         SetFloat(ball.GetComponent<BallModel>(), "_speed", ballSpeed);
 
-        // Bricks
         Transform parent = new GameObject("Bricks").transform;
         for (int r = 0; r < layout.Length; r++)
         {
@@ -409,7 +386,6 @@ public static class BricksProjectBuilder
             }
         }
 
-        // Gerenciador da fase (Model + Controller + View)
         GameObject manager = new GameObject("LevelManager");
         LevelModel model = manager.AddComponent<LevelModel>();
         LevelController controller = manager.AddComponent<LevelController>();
@@ -433,7 +409,6 @@ public static class BricksProjectBuilder
         Canvas canvas = CreateCanvas("HUD", cam, 100);
         Transform root = canvas.transform;
 
-        // Barra superior
         Image bar = MakeImage(root, "TopBar", Spr("px.png"), new Color(0.03f, 0.03f, 0.035f, 0.80f),
                               new Vector2(0.5f, 1f), Vector2.zero, new Vector2(0f, 150f), false, false);
         RectTransform barRt = bar.rectTransform;
@@ -456,7 +431,6 @@ public static class BricksProjectBuilder
         TextMeshProUGUI levelText = MakeText(bar.transform, "LevelText", "FASE 1", 52, new Color(1f, 0.9f, 0.4f),
                                              TextAlignmentOptions.Center, new Vector2(0.5f, 1f), new Vector2(110f, -40f), new Vector2(260f, 80f));
 
-        // Corações (vidas)
         Image[] hearts = new Image[3];
         for (int i = 0; i < hearts.Length; i++)
         {
@@ -464,7 +438,6 @@ public static class BricksProjectBuilder
                                   new Vector2(1f, 1f), new Vector2(-28f - (hearts.Length - 1 - i) * 84f, -39f), new Vector2(72f, 72f));
         }
 
-        // Mensagem central ("Clique para lançar", "Fase concluída"...)
         Image panel = MakeImage(root, "Message", Spr("panel.png"), new Color(0.03f, 0.03f, 0.035f, 0.80f),
                                 new Vector2(0.5f, 0.5f), new Vector2(0f, -330f), new Vector2(900f, 160f), true);
         TextMeshProUGUI message = MakeText(panel.transform, "MessageText", "Clique ou ESPAÇO para lançar", 50, Color.white,
@@ -482,7 +455,6 @@ public static class BricksProjectBuilder
         SetRef(hud, "_messageText", message);
     }
 
-    // ------------------------------------------------------ Vitória / Game Over
     private static void BuildEndScene(bool victory)
     {
         Scene scene = NewScene();
@@ -492,7 +464,6 @@ public static class BricksProjectBuilder
         Canvas canvas = CreateCanvas("UI", cam, 100);
         Transform ui = canvas.transform;
 
-        // Fundo 100% estático: sem confete nem brasas.
 
         Image title = MakeImage(ui, "Title", Spr(victory ? "title_victory.png" : "title_gameover.png"), Color.white,
                                 new Vector2(0.5f, 0.5f), new Vector2(0f, 560f), new Vector2(960f, 288f));
@@ -538,7 +509,6 @@ public static class BricksProjectBuilder
         SaveScene(scene, victory ? SceneNames.Victory : SceneNames.GameOver);
     }
 
-    // ================================================================ OBJETOS DE CENA
     private static Camera CreateCamera()
     {
         GameObject go = new GameObject("Main Camera");
@@ -564,7 +534,7 @@ public static class BricksProjectBuilder
         sr.sortingOrder = -10;
 
         Vector3 size = sr.sprite.bounds.size;
-        float scale = Mathf.Max(2f * HalfW / size.x, 10f / size.y);   // cobre a área 6 x 10
+        float scale = Mathf.Max(2f * HalfW / size.x, 10f / size.y);   
         go.transform.localScale = new Vector3(scale, scale, 1f);
     }
 
@@ -574,7 +544,6 @@ public static class BricksProjectBuilder
         MakeWall("WallRight", new Vector2( HalfW + 0.15f, 0f),          new Vector2(0.3f, 10.4f), bounce);
         MakeWall("WallTop",   new Vector2(0f, TopInner + 0.15f),        new Vector2(6.6f, 0.3f),  bounce);
 
-        // Zona de perda (gatilho abaixo da tela)
         GameObject dead = new GameObject("DeadZone");
         dead.tag = "DeadZone";
         dead.transform.position = new Vector3(0f, -5.7f, 0f);
@@ -600,7 +569,6 @@ public static class BricksProjectBuilder
         col.sharedMaterial = bounce;
     }
 
-    /// <summary>Moldura luminosa nas laterais da área de jogo (apenas visual, sem colisor).</summary>
     private static void CreateEdgeGlow()
     {
         foreach (float side in new[] { -1f, 1f })
@@ -632,7 +600,6 @@ public static class BricksProjectBuilder
 #endif
     }
 
-    // =================================================================== UI (helpers)
     private static Canvas CreateCanvas(string name, Camera cam, int order)
     {
         GameObject go = new GameObject(name, typeof(RectTransform));
@@ -720,7 +687,6 @@ public static class BricksProjectBuilder
         return button;
     }
 
-    /// <summary>Texto de dica no rodapé, sobre uma "pílula" escura translúcida (legível em qualquer fundo).</summary>
     private static void MakeHint(Transform parent, string text, float height)
     {
         Image pill = MakeImage(parent, "Hint", Spr("panel.png"), new Color(0.02f, 0.02f, 0.025f, 0.55f),
@@ -808,13 +774,11 @@ public static class BricksProjectBuilder
         return result;
     }
 
-    // ======================================================== SerializedObject (helpers)
     private static Sprite Spr(string file)
     {
         Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(ArtDir + file);
         if (sprite == null)
         {
-            // última tentativa: reimporta como Sprite
             TextureImporter importer = AssetImporter.GetAtPath(ArtDir + file) as TextureImporter;
             if (importer != null)
             {

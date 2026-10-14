@@ -3,10 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// VIEW das telas finais (VITÓRIA e GAME OVER): mostra nome, pontuação, recorde e
-/// os botões RECOMEÇAR / MENU / SAIR (atalhos: Enter ou R recomeça, Esc volta ao menu).
-/// </summary>
 public class EndScreenView : MonoBehaviour
 {
     [SerializeField] private GameFlowController _flow;

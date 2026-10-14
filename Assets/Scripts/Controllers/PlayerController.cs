@@ -1,9 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// CONTROLLER do player: move a raquete respeitando os limites do Model.
-/// Usa Rigidbody2D cinemático (MovePosition) para a física da bola reagir corretamente.
-/// </summary>
+
 [RequireComponent(typeof(Rigidbody2D), typeof(PlayerModel))]
 public class PlayerController : MonoBehaviour
 {
@@ -17,13 +14,11 @@ public class PlayerController : MonoBehaviour
         transform.localScale = Vector3.one * _playerModel.scale;
     }
 
-    /// <summary>Movimento por teclado (h = -1..+1). Chamar a cada FixedUpdate.</summary>
     public void Move(float h)
     {
         MoveTo(_rigidBody2d.position.x + h * _playerModel.speed * Time.fixedDeltaTime);
     }
 
-    /// <summary>Segue uma posição X (mouse/toque), limitando a velocidade para não "teleportar".</summary>
     public void MoveTo(float targetX)
     {
         float maxStep = _playerModel.speed * 3f * Time.fixedDeltaTime;

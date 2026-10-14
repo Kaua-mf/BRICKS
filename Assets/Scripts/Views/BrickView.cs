@@ -1,10 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// VIEW do brick: cor, rachaduras, animação de impacto, som e partículas.
-/// Mantém o método PerformTakeDamage da aula (View -> Controller).
-/// </summary>
+
 public class BrickView : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer _body;
@@ -48,7 +45,6 @@ public class BrickView : MonoBehaviour
     {
         _body.color = _brickModel.GetColor(healthRatio);
 
-        // Rachaduras: quanto menos vida, mais rachado
         if (_crack != null && _crackSprites != null && _crackSprites.Length > 0)
         {
             int index = Mathf.Clamp(Mathf.RoundToInt((1f - healthRatio) * _crackSprites.Length) - 1, 0, _crackSprites.Length - 1);

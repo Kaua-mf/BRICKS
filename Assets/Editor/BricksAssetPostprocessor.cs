@@ -2,10 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>
-/// Importa automaticamente tudo que está em Assets/Art como Sprite, com a escala (pixels por unidade)
-/// certa para cada imagem. Assim não é preciso configurar nada no Inspector.
-/// </summary>
+
 public class BricksAssetPostprocessor : AssetPostprocessor
 {
     public const string ArtFolder = "Assets/Art/";
@@ -20,7 +17,6 @@ public class BricksAssetPostprocessor : AssetPostprocessor
     {
         string n = Path.GetFileNameWithoutExtension(path);
 
-        // Malha "Full Rect" (necessária para sprites 9-slice na UI)
         TextureImporterSettings settings = new TextureImporterSettings();
         importer.ReadTextureSettings(settings);
         settings.spriteMeshType = SpriteMeshType.FullRect;
@@ -40,8 +36,6 @@ public class BricksAssetPostprocessor : AssetPostprocessor
             : TextureImporterCompression.Uncompressed;
     }
 
-    // brick 150x60 px -> 0.75 x 0.30 un | paddle 240x56 px -> 1.2 x 0.28 un (120 px / 100 da aula)
-    // ball 128 px -> 0.30 un
     private static float PixelsPerUnit(string n)
     {
         if (n == "ball")                               return 128f / 0.3f;

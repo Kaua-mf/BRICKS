@@ -1,10 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// CONTROLLER da bola: regras de movimento, reflexão, lançamento e perda.
-/// Mantém os métodos da aula (PerfectAngleReflect, AngleChange, CalcBallAngleReflect).
-/// Avisa quem tiver interesse por EVENTOS (Attached, Launched, Lost), sem conhecer ninguém.
-/// </summary>
 [RequireComponent(typeof(Rigidbody2D), typeof(BallModel))]
 public class BallController : MonoBehaviour
 {
@@ -29,7 +24,6 @@ public class BallController : MonoBehaviour
     {
         if (!_isLaunched) return;
 
-        // Mantém a velocidade constante e a direção sincronizada com a física
         Vector2 v = _rigidBody2d.linearVelocity;
         if (v.sqrMagnitude < 0.0001f) return;
 
@@ -37,15 +31,14 @@ public class BallController : MonoBehaviour
         _rigidBody2d.linearVelocity = _ballModel.direction * _ballModel.speed;
     }
 
-    // ------------------------------------------------------------ ciclo da bola
-    /// <summary>Gruda a bola no player (início da fase ou depois de perder uma vida).</summary>
+
     public void AttachTo(Transform player)
     {
         _isLaunched = false;
         _isAttached = true;
 
         _rigidBody2d.linearVelocity = Vector2.zero;
-        _rigidBody2d.simulated = false;              // desliga a física enquanto está no player
+        _rigidBody2d.simulated = false;              
 
         transform.SetParent(player, false);
         transform.localPosition = new Vector3(0f, _ballModel.attachOffsetY, 0f);
@@ -54,7 +47,6 @@ public class BallController : MonoBehaviour
         Attached?.Invoke();
     }
 
-    /// <summary>Solta a bola para cima, com uma pequena variação de ângulo. Retorna false se não pôde lançar.</summary>
     public bool Launch()
     {
         if (!_isAttached || _isLaunched) return false;
@@ -71,7 +63,6 @@ public class BallController : MonoBehaviour
         return true;
     }
 
-    /// <summary>Para a bola (fim de fase, vida perdida ou game over).</summary>
     public void Stop()
     {
         _isLaunched = false;
@@ -80,7 +71,6 @@ public class BallController : MonoBehaviour
         _rigidBody2d.simulated = false;
     }
 
-    /// <summary>Chamado quando a bola cai na zona de perda.</summary>
     public void NotifyLost()
     {
         if (!_isLaunched) return;
@@ -88,13 +78,11 @@ public class BallController : MonoBehaviour
         Lost?.Invoke();
     }
 
-    // ------------------------------------------------------ reflexão (da aula)
-    /// <summary>Reflexão perfeita (paredes e bricks): espelha a direção pela normal do contato.</summary>
+    
     public void PerfectAngleReflect(Collision2D collision)
     {
         Vector2 normal = collision.GetContact(0).normal;
 
-        // Se a bola já está se afastando (2º contato no mesmo quadro), não reflete de novo
         if (Vector2.Dot(_ballModel.direction, normal) >= 0f) return;
 
         AngleChange(Vector2.Reflect(_ballModel.direction, normal));
@@ -106,17 +94,10 @@ public class BallController : MonoBehaviour
         _rigidBody2d.linearVelocity = _ballModel.direction * _ballModel.speed;
     }
 
-    /// <summary>
-    /// Reflexão no player: o ângulo depende do ponto onde a bola bate (mesma lógica da aula).
-    /// Borda direita = 25 graus, centro = 90 graus (vertical), borda esquerda = 155 graus.
-    /// A largura do player agora vem do collider (antes era fixa: 120 px / 100).
-    /// </summary>
     public void CalcBallAngleReflect(Collision2D playerCol)
     {
-        // Metade da largura do player, na escala da Unity (antes: 120 / 2 / 100 = 0.6)
         float halfWidth = playerCol.collider.bounds.extents.x;
 
-        // 0 na borda direita ... 1 na borda esquerda (equivale ao "fator 1.5" da aula)
         float t = Mathf.Clamp01((playerCol.transform.position.x - transform.position.x + halfWidth) / (2f * halfWidth));
 
         float angleDeg = Mathf.Clamp(t * 180f, 25f, 155f);
@@ -125,13 +106,11 @@ public class BallController : MonoBehaviour
         AngleChange(new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)));
     }
 
-    /// <summary>Critério de pontuação: bater no player custa pontos.</summary>
     public void OnPlayerContact()
     {
         GameSession.Instance.AddScore(ScoreRules.PlayerHit);
     }
 
-    // ------------------------------------------------------------------ apoio
     private Vector2 EnforceMinVertical(Vector2 dir)
     {
         float min = _ballModel.minVerticalComponent;

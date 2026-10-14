@@ -1,10 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// VIEW do player: lê o teclado/mouse/toque, envia o movimento ao Controller e
-/// dá o feedback visual/sonoro quando a bola bate (efeito de som do player).
-/// </summary>
+
 [RequireComponent(typeof(PlayerController))]
 public class PlayerView : MonoBehaviour
 {
@@ -24,7 +21,7 @@ public class PlayerView : MonoBehaviour
     void Start()
     {
         _camera      = Camera.main;
-        _baseScale   = transform.localScale;   // já com a escala aplicada pelo PlayerController
+        _baseScale   = transform.localScale;   
         _lastPointer = GameInput.PointerPosition();
     }
 
@@ -36,7 +33,6 @@ public class PlayerView : MonoBehaviour
         bool moved = (p - _lastPointer).sqrMagnitude > 1f;
         _lastPointer = p;
 
-        // Mouse/toque só assume o controle se mexeu ou está pressionado; o teclado tem prioridade
         _useMouse = (moved || GameInput.PointerHeld()) && Mathf.Abs(_h) < 0.01f;
         if (_useMouse && _camera != null)
             _targetX = _camera.ScreenToWorldPoint(new Vector3(p.x, p.y, -_camera.transform.position.z)).x;

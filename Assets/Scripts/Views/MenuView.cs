@@ -2,10 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// VIEW da TELA DE ABERTURA: nome do jogador, botão Jogar, botão Sair e recorde.
-/// Quem executa as ações é o GameFlowController.
-/// </summary>
 public class MenuView : MonoBehaviour
 {
     [SerializeField] private GameFlowController _flow;

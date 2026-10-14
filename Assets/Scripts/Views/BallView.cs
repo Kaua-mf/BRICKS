@@ -1,10 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// VIEW da bola: lê a entrada (lançar), detecta as colisões da Unity e delega as regras ao Controller.
-/// Também cuida do visual (rastro) e do som de colisão com parede/lançamento.
-/// Não altera pontuação nem vidas: isso é papel dos Controllers.
-/// </summary>
+
 [RequireComponent(typeof(BallController), typeof(BallModel))]
 public class BallView : MonoBehaviour
 {
@@ -45,20 +41,18 @@ public class BallView : MonoBehaviour
 
         if (otherTag == "Enemy")
         {
-            // Brick: causa dano (a pontuação e o som são tratados pelo BrickController/BrickView)
             BrickView brickView = collision.gameObject.GetComponent<BrickView>();
             if (brickView != null) brickView.PerformTakeDamage(_ballModel.power);
             _ballController.PerfectAngleReflect(collision);
         }
         else if (otherTag == "Player")
         {
-            // Player: ângulo calculado pelo ponto de contato + penalidade de pontos
             _ballController.CalcBallAngleReflect(collision);
             _ballController.OnPlayerContact();
         }
         else
         {
-            // Paredes
+             
             _ballController.PerfectAngleReflect(collision);
             AudioManager.Play(Sfx.Wall, Random.Range(0.95f, 1.08f));
         }
@@ -70,7 +64,6 @@ public class BallView : MonoBehaviour
             _ballController.NotifyLost();
     }
 
-    // ---------------------------------------------------------------- visual
     private void CreateTrail()
     {
         _trail = gameObject.AddComponent<TrailRenderer>();

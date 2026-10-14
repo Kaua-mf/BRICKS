@@ -1,8 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// MODEL do player (raquete): dados de movimento e vidas.
-/// </summary>
 public class PlayerModel : MonoBehaviour
 {
     [Header("Movimento")]

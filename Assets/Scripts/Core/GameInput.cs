@@ -3,13 +3,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 #endif
 
-/// <summary>
-/// Lê o teclado/mouse/toque. Funciona tanto com o Input antigo (Input.GetAxis) quanto com o
-/// novo Input System, dependendo da configuração do projeto.
-/// </summary>
+
 public static class GameInput
 {
-    /// <summary>-1 (esquerda) .. +1 (direita): setas ou A/D.</summary>
     public static float Horizontal()
     {
 #if ENABLE_INPUT_SYSTEM
@@ -24,7 +20,6 @@ public static class GameInput
 #endif
     }
 
-    /// <summary>Espaço, clique do mouse ou toque.</summary>
     public static bool LaunchPressed()
     {
 #if ENABLE_INPUT_SYSTEM
@@ -37,7 +32,6 @@ public static class GameInput
 #endif
     }
 
-    /// <summary>Enter ou R (usado nas telas de vitória e game over).</summary>
     public static bool ConfirmPressed()
     {
 #if ENABLE_INPUT_SYSTEM

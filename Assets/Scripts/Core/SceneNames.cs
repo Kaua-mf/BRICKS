@@ -1,7 +1,4 @@
-/// <summary>
-/// Nomes das cenas do jogo (devem ser iguais aos nomes dos arquivos .unity em Assets/Scenes).
-/// Centralizar aqui evita "strings mágicas" espalhadas pelo código.
-/// </summary>
+
 public static class SceneNames
 {
     public const string Menu     = "Menu";      // tela de abertura

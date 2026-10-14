@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Estilhaços coloridos que voam quando um brick é destruído (efeito visual).</summary>
 public class DebrisView : MonoBehaviour
 {
     private static Sprite _sprite;

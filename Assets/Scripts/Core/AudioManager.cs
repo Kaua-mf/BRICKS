@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-/// <summary>Efeitos sonoros disponíveis.</summary>
 public enum Sfx
 {
     BrickHit,       // bola acertou um brick (que continua vivo)
@@ -17,13 +16,7 @@ public enum Sfx
     Click           // clique de botão
 }
 
-/// <summary>
-/// Gerenciador de áudio (Singleton que sobrevive às cenas).
-///  - Música de fundo: troca sozinha conforme a cena (menu, fases, vitória, game over).
-///  - Efeitos: AudioManager.Play(Sfx.X) de qualquer lugar.
-/// Os arquivos ficam em Assets/Resources/Audio. Tecla M liga/desliga o som.
-/// Não precisa colocar nada na cena: ele se cria sozinho ao iniciar o jogo.
-/// </summary>
+
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
@@ -94,7 +87,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    /// <summary>True se o jogador está digitando num campo de texto (ex.: nome no menu): a tecla M não deve mutar.</summary>
     private static bool IsTyping()
     {
         if (EventSystem.current == null) return false;
@@ -116,7 +108,7 @@ public class AudioManager : MonoBehaviour
             case SceneNames.Menu:     PlayMusic("bgm_menu",     true);  break;
             case SceneNames.Victory:  PlayMusic("bgm_victory",  true);  break;
             case SceneNames.GameOver: PlayMusic("bgm_gameover", false); break;
-            default:                  PlayMusic("bgm_game",     true);  break; // Fase1, Fase2, Fase3...
+            default:                  PlayMusic("bgm_game",     true);  break;
         }
     }
 
@@ -125,7 +117,6 @@ public class AudioManager : MonoBehaviour
         AudioClip clip = Resources.Load<AudioClip>(Folder + clipName);
         if (clip == null) return;
 
-        // Entre uma fase e outra a música não reinicia
         if (_music.clip == clip && _music.isPlaying && loop) return;
 
         _music.clip = clip;
@@ -133,7 +124,6 @@ public class AudioManager : MonoBehaviour
         _music.Play();
     }
 
-    /// <summary>Toca um efeito sonoro (pitch opcional para variar o som).</summary>
     public static void Play(Sfx sfx, float pitch = 1f)
     {
         if (Instance == null) return;

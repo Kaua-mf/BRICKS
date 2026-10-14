@@ -1,10 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// VIEW dos efeitos da fase: sons de vida perdida / fase concluída e tremor da câmera.
-/// Apenas escuta os eventos do LevelController.
-/// </summary>
+
 public class LevelView : MonoBehaviour
 {
     [SerializeField] private LevelController _level;

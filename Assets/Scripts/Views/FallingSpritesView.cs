@@ -2,10 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Decoração animada de UI: sprites caindo (confete na vitória) ou subindo (brasas no game over),
-/// estrelas flutuando no menu... Só efeito visual.
-/// </summary>
+
 public class FallingSpritesView : MonoBehaviour
 {
     [SerializeField] private RectTransform _area;

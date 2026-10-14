@@ -3,12 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// VIEW do HUD (demonstrativo em tela): pontuação, vidas (corações), fase, nome do jogador e mensagens.
-///
-/// INDEPENDÊNCIA DE CAMADAS: esta View só LÊ e ESCUTA. Ela assina os eventos do Singleton GameSession
-/// (ScoreChanged, LivesChanged, LevelChanged) e do LevelController (StateChanged) e nunca altera dados.
-/// </summary>
 public class HudView : MonoBehaviour
 {
     [Header("Fonte dos dados")]
@@ -61,7 +55,6 @@ public class HudView : MonoBehaviour
         UpdateLevel(s.CurrentLevel);
     }
 
-    // ------------------------------------------------------------------ reações
     private void UpdateScore(int score)
     {
         int delta = score - _lastScore;
@@ -118,7 +111,6 @@ public class HudView : MonoBehaviour
         _messageRoot.SetActive(false);
     }
 
-    // --------------------------------------------------------------- animações
     private IEnumerator Flash(TMP_Text text, Color flash)
     {
         const float duration = 0.35f;

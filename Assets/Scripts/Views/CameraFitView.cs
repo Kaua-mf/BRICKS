@@ -1,14 +1,11 @@
 using UnityEngine;
 
-/// <summary>
-/// Mantém o jogo sempre na proporção retrato (6 x 10 unidades), com faixas pretas se a janela for diferente.
-/// Assim o visual e a interface ficam iguais em qualquer tamanho de tela.
-/// </summary>
+
 [RequireComponent(typeof(Camera))]
 public class CameraFitView : MonoBehaviour
 {
-    [SerializeField] private float _targetAspect = 0.6f;   // largura / altura (6 / 10)
-    [SerializeField] private float _orthoSize    = 5f;     // metade da altura do mundo
+    [SerializeField] private float _targetAspect = 0.6f;   
+    [SerializeField] private float _orthoSize    = 5f;     
 
     private Camera _camera;
     private int _width, _height;
@@ -29,7 +26,6 @@ public class CameraFitView : MonoBehaviour
 
     private void CreateBarsCamera()
     {
-        // Câmera de fundo que pinta as faixas pretas fora da área do jogo
         GameObject go = new GameObject("BarsCamera");
         go.transform.SetParent(transform, false);
         Camera bars = go.AddComponent<Camera>();
